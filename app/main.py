@@ -1,13 +1,11 @@
 import os
 import uuid
-
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from app.predict_all_combined import predict_image_top3
 from PIL import Image
 import io
-
 
 app = FastAPI()
 
