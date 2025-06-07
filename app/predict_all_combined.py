@@ -20,6 +20,7 @@ from skimage.feature import hog
 from skimage import color
 from skimage.feature import graycomatrix, graycoprops
 from skimage.feature import local_binary_pattern
+from huggingface_hub import hf_hub_download
 
 def get_style_examples(style_name, num=3):
     base_path = os.path.join(BASE_DIR, "..", "dataset_styles", "train", style_name)
@@ -47,8 +48,8 @@ matplotlib.use('Agg')
 IMG_SIZE = 224
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-GENRE_PATH = os.path.join(BASE_DIR, "..", "models", "model_genre.pth")
-STYLE_PATH = os.path.join(BASE_DIR, "..", "models", "model_styles.pth")
+GENRE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_genre.pth")
+STYLE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_styles.pth")
 
 genre_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_genre", "train")))
 style_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_styles", "train")))
