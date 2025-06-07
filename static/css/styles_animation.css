@@ -1,0 +1,19 @@
+      body {
+        opacity: 0;
+        transition: opacity 0.8s ease;
+      }
+
+      body.loaded {
+        opacity: 1;
+      }
+
+      .animated-block {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease;
+      }
+
+      .animated-block.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
