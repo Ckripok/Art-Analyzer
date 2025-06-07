@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pkl
+*.log
+models/
+dataset_*/
+static/*.jpg
+static/*.png
+static/*.pdf
+static/*.svg
+static/*.gif
+*.pth
