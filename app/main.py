@@ -10,28 +10,40 @@ import io
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/static_examples", StaticFiles(directory="E:/pythonProject/dataset_styles/train"), name="static_examples")
-app.mount("/static_examples_genre", StaticFiles(directory="E:/pythonProject/dataset_genre/train"), name="static_examples_genre")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+static_styles_path = os.path.join(BASE_DIR, "dataset_styles", "train")
+if os.path.exists(static_styles_path):
+    app.mount("/static_examples", StaticFiles(directory=static_styles_path), name="static_examples")
+
+static_genre_path = os.path.join(BASE_DIR, "dataset_genre", "train")
+if os.path.exists(static_genre_path):
+    app.mount("/static_examples_genre", StaticFiles(directory=static_genre_path), name="static_examples_genre")
+
 
 @app.get("/")
 async def home():
-    return FileResponse("/pythonProject/templates/main.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "main.html"))
 
 @app.get("/main.html")
 async def main_page():
-    return FileResponse("/pythonProject/templates/main.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "main.html"))
+
 
 @app.get("/genres.html")
 async def genres_page():
-    return FileResponse("/pythonProject/templates/genres.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "genres.html"))
+
 
 @app.get("/styles.html")
 async def styles_page():
-    return FileResponse("/pythonProject/templates/styles.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "styles.html"))
+
 
 @app.get("/api/genres")
 async def get_genres():
-    base_path = "/pythonProject/dataset_genre/train"
+    base_path = os.path.join(BASE_DIR, "dataset_genre", "train")
+
     genres = []
     for folder in sorted(os.listdir(base_path)):
         folder_path = os.path.join(base_path, folder)
@@ -51,7 +63,7 @@ async def get_genres():
 
 @app.get("/api/styles")
 async def get_styles():
-    base_path = "/pythonProject/dataset_styles/train"
+    base_path = os.path.join(BASE_DIR, "dataset_styles", "train")
     styles = []
     for folder in sorted(os.listdir(base_path)):
         folder_path = os.path.join(base_path, folder)
@@ -73,15 +85,18 @@ async def get_styles():
 
 @app.get("/analysis.html")
 async def analysis_page():
-    return FileResponse("/pythonProject/templates/analysis.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "analysis.html"))
+
 
 @app.get("/about.html")
 async def about():
-    return FileResponse("/pythonProject/templates/about.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "about.html"))
+
 
 @app.get("/contacts.html")
 async def contacts():
-    return FileResponse("/pythonProject/templates/contacts.html")
+    return FileResponse(os.path.join(BASE_DIR, "templates", "contacts.html"))
+
 
 @app.post("/predict_all_combined")
 async def predict(file: UploadFile = File(...)):
@@ -90,12 +105,12 @@ async def predict(file: UploadFile = File(...)):
 
     # Сохраняем CAM-карту в static/
     cam_filename = f"{uuid.uuid4().hex}.jpg"
-    cam_path = os.path.join("/pythonProject/static", cam_filename)
+    cam_path = os.path.join(BASE_DIR, "static", cam_filename)
 
     results = predict_image_top3(image, save_cam_path=cam_path)
 
     return JSONResponse(content={
         "filename": file.filename,
         **results,
-        "cam_path": cam_filename  # только имя файла, чтобы в JS подставить `/static/${cam_path}`
+        "cam_path": cam_filename
     })
