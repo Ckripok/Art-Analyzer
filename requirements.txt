@@ -11,4 +11,3 @@ matplotlib
 transformers
 tqdm
 opencv-python
-huggingface-hub
