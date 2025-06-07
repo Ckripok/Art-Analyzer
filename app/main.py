@@ -17,8 +17,6 @@ app.mount("/static_examples_genre", StaticFiles(directory="E:/pythonProject/data
 async def home():
     return FileResponse("/pythonProject/templates/main.html")
 
-
-
 @app.get("/main.html")
 async def main_page():
     return FileResponse("/pythonProject/templates/main.html")
