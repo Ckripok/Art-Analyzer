@@ -1,2 +1,12 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+fastapi
+uvicorn
+torch
+torchvision
+Pillow
+numpy
+scikit-image
+scikit-learn
+matplotlib
+transformers
+tqdm
+opencv-python
