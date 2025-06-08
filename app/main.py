@@ -6,12 +6,15 @@ from fastapi.staticfiles import StaticFiles
 from app.predict_all_combined import predict_image_top3
 from PIL import Image
 import io
+import logging
 from fastapi.logger import logger
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+logging.basicConfig(level=logging.INFO)
 
 static_styles_path = os.path.join(BASE_DIR, "dataset_styles", "train")
 if os.path.exists(static_styles_path):
@@ -22,8 +25,8 @@ if os.path.exists(static_genre_path):
     app.mount("/static_examples_genre", StaticFiles(directory=static_genre_path), name="static_examples_genre")
 
 @app.get("/")
-async def root():
-    return {"message": "OK"}
+async def home():
+    return FileResponse(os.path.join(BASE_DIR, "..", "templates", "main.html"))
 
 
 @app.get("/main.html")

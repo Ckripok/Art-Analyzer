@@ -22,7 +22,7 @@ from skimage.feature import graycomatrix, graycoprops
 from skimage.feature import local_binary_pattern
 from huggingface_hub import hf_hub_download
 
-
+os.makedirs("./cache", exist_ok=True)
 def get_style_examples(style_name, num=3):
     base_path = os.path.join(BASE_DIR, "..", "dataset_styles", "train", style_name)
     if not os.path.exists(base_path):
@@ -49,8 +49,8 @@ matplotlib.use('Agg')
 IMG_SIZE = 224
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-GENRE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_genre.pth")
-STYLE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_styles.pth")
+GENRE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_genre.pth", cache_dir="./cache")
+STYLE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_styles.pth", cache_dir="./cache")
 
 try:
     genre_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_genre", "train")))
@@ -62,13 +62,19 @@ try:
 except FileNotFoundError:
     style_classes = []
 
-print("📦 Загружаем BLIP модель...")
-blip_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-blip_model = BlipForConditionalGeneration.from_pretrained(
-    "Salesforce/blip-image-captioning-base",
-    use_safetensors=True
-)
-print("✅ BLIP модель загружена.")
+blip_processor = None
+blip_model = None
+
+def load_blip_models():
+    global blip_processor, blip_model
+    if blip_processor is None or blip_model is None:
+        print("📦 Загружаем BLIP модель...")
+        blip_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+        blip_model = BlipForConditionalGeneration.from_pretrained(
+            "Salesforce/blip-image-captioning-base",
+            use_safetensors=True
+        )
+        print("✅ BLIP модель загружена.")
 
 
 transform = transforms.Compose([
@@ -388,6 +394,7 @@ def plot_histogram(data, title, color, output_path):
     plt.savefig(output_path, transparent=True)
     plt.close()
 def generate_caption(image: Image.Image) -> str:
+    load_blip_models()
     inputs = blip_processor(image, return_tensors="pt")
     out = blip_model.generate(
         **inputs,
@@ -397,5 +404,4 @@ def generate_caption(image: Image.Image) -> str:
         length_penalty=1.0,
         early_stopping=True
     )
-    caption = blip_processor.decode(out[0], skip_special_tokens=True)
-    return caption
+    return blip_processor.decode(out[0], skip_special_tokens=True)
