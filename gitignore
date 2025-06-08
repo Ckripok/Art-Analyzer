@@ -67,9 +67,3 @@ dmypy.json
 # Pyre
 .pyre/
 
-# FastAPI static files
-*.jpg
-*.png
-*.jpeg
-*.gif
-*.svg

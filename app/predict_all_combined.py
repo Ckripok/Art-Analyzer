@@ -169,11 +169,6 @@ def plot_cumulative_and_pdf(data, output_cdf_path, output_pdf_path, color):
 
 # Главная функция предсказания
 def predict_image_top3(image: Image.Image, save_cam_path=None):
-    if model_genre is None or model_style is None:
-        return {
-            "error": "Модели не загружены. Проверьте наличие dataset_genre/train и dataset_styles/train."
-        }
-
     saturation, brightness, contrast = calc_saturation_contrast(image)
     input_tensor = transform(image).unsqueeze(0).to(DEVICE)
     saturation, brightness, contrast = calc_saturation_contrast(image)
@@ -184,6 +179,11 @@ def predict_image_top3(image: Image.Image, save_cam_path=None):
 
         genre_probs = F.softmax(genre_output, dim=1).cpu().numpy()[0]
         style_probs = F.softmax(style_output, dim=1).cpu().numpy()[0]
+
+    if model_genre is None or model_style is None:
+        return {
+            "error": "Модели не загружены. Проверьте наличие dataset_genre/train и dataset_styles/train."
+        }
 
     genre_top3 = sorted(zip(genre_classes, genre_probs), key=lambda x: x[1], reverse=True)
     style_top3 = sorted(zip(style_classes, style_probs), key=lambda x: x[1], reverse=True)
