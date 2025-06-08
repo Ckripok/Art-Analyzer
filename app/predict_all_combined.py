@@ -74,6 +74,9 @@ transform = transforms.Compose([
 ])
 
 def load_model(path, num_classes):
+    if num_classes == 0:
+        return None  # модель не создаётся без классов
+
     model = models.resnet50(weights=None)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     model.load_state_dict(torch.load(path, map_location=DEVICE))
@@ -81,8 +84,10 @@ def load_model(path, num_classes):
     model.eval()
     return model
 
+
 model_genre = load_model(GENRE_PATH, len(genre_classes))
 model_style = load_model(STYLE_PATH, len(style_classes))
+
 
 # Палитра
 def extract_palette(image: Image.Image, n_colors=28):
