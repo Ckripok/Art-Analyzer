@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from app.predict_all_combined import predict_image_top3
 from PIL import Image
 import io
+from fastapi.logger import logger
 
 app = FastAPI()
 
@@ -108,6 +109,9 @@ async def predict(file: UploadFile = File(...)):
     cam_path = os.path.join(BASE_DIR, "..", "static", cam_filename)
 
     results = predict_image_top3(image, save_cam_path=cam_path)
+
+    if "error" in results:
+        return JSONResponse(status_code=500, content=results)
 
     return JSONResponse(content={
         "filename": file.filename,
