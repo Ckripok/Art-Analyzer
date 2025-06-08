@@ -22,6 +22,7 @@ from skimage.feature import graycomatrix, graycoprops
 from skimage.feature import local_binary_pattern
 from huggingface_hub import hf_hub_download
 
+
 def get_style_examples(style_name, num=3):
     base_path = os.path.join(BASE_DIR, "..", "dataset_styles", "train", style_name)
     if not os.path.exists(base_path):
@@ -61,11 +62,14 @@ try:
 except FileNotFoundError:
     style_classes = []
 
+print("📦 Загружаем BLIP модель...")
 blip_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
 blip_model = BlipForConditionalGeneration.from_pretrained(
     "Salesforce/blip-image-captioning-base",
     use_safetensors=True
 )
+print("✅ BLIP модель загружена.")
+
 
 transform = transforms.Compose([
     transforms.Resize((IMG_SIZE, IMG_SIZE)),
