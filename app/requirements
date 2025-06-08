@@ -10,3 +10,4 @@ matplotlib
 transformers
 tqdm
 opencv-python-headless
+safetensors
