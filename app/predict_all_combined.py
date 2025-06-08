@@ -51,8 +51,16 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 GENRE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_genre.pth")
 STYLE_PATH = hf_hub_download(repo_id="DatsuNTOYOTA/ARTS", filename="model_styles.pth")
 
-genre_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_genre", "train")))
-style_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_styles", "train")))
+try:
+    genre_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_genre", "train")))
+except FileNotFoundError:
+    genre_classes = []
+
+try:
+    style_classes = sorted(os.listdir(os.path.join(BASE_DIR, "..", "dataset_styles", "train")))
+except FileNotFoundError:
+    style_classes = []
+
 blip_processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
 blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
