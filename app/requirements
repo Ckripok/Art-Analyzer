@@ -1,14 +1,14 @@
 fastapi
 uvicorn
-torch
-torchvision
+python-multipart
+torch==2.2.2+cpu
+torchvision==0.17.2+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
 Pillow
-numpy
+numpy<2
 scikit-image
 scikit-learn
 matplotlib
 transformers
 tqdm
 opencv-python-headless
-safetensors
-python-multipart
