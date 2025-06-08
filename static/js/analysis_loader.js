@@ -57,6 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
   })
    .then(res => res.json())
    .then(data => {
+
+      if (data.error) {
+    console.error("Сервер вернул ошибку:", data.error);
+    alert("Ошибка: " + data.error);
+    retu
    genreResults.innerHTML = "";
    styleResults.innerHTML = "";
    // Примеры миниатюр
