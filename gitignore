@@ -73,8 +73,3 @@ dmypy.json
 *.jpeg
 *.gif
 *.svg
-
-# Custom additions
-models/
-dataset_genre/
-dataset_styles/
