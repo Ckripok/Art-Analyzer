@@ -62,6 +62,19 @@ async def get_genres():
 
     return JSONResponse(content=genres)
 
+
+@app.get("/debug/fs")
+def debug_fs():
+    import os
+    base = os.path.dirname(os.path.abspath(__file__))
+    return {
+        "BASE_DIR": base,
+        "dataset_genre_path": os.path.exists(os.path.join(base, "..", "dataset_genre", "train")),
+        "dataset_styles_path": os.path.exists(os.path.join(base, "..", "dataset_styles", "train")),
+    }
+
+
+
 @app.get("/api/styles")
 async def get_styles():
     base_path = os.path.join(BASE_DIR, "..", "dataset_styles", "train")
