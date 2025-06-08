@@ -67,6 +67,9 @@ blip_model = BlipForConditionalGeneration.from_pretrained(
     use_safetensors=True
 )
 
+print("BLIP processor:", blip_processor)
+print("BLIP model:", blip_model)
+
 transform = transforms.Compose([
     transforms.Resize((IMG_SIZE, IMG_SIZE)),
     transforms.ToTensor(),
@@ -383,38 +386,20 @@ def plot_histogram(data, title, color, output_path):
     plt.tight_layout()
     plt.savefig(output_path, transparent=True)
     plt.close()
-
-def calc_saturation_contrast(image: Image.Image):
-    img_np = np.array(image.convert("RGB")) / 255.0
-    hsv = matplotlib.colors.rgb_to_hsv(img_np)
-
-    saturation = hsv[..., 1]
-    value = hsv[..., 2]
-    contrast = np.std(value)
-
-    return saturation.flatten(), value.flatten(), contrast
-
-def plot_histogram(data, title, color, output_path):
-    plt.figure(figsize=(6, 3), dpi=100)
-    plt.hist(data, bins=30, color=color, edgecolor='none', alpha=0.8)
-    plt.title(title, fontdict={'family': 'Tablon', 'color': '#00ff88', 'fontsize': 12})
-    plt.gca().set_facecolor('none')
-    plt.grid(False)
-    plt.xticks(color='#aaa', fontname='Tablon')
-    plt.yticks(color='#aaa', fontname='Tablon')
-    plt.tight_layout()
-    plt.savefig(output_path, transparent=True)
-    plt.close()
-
 def generate_caption(image: Image.Image) -> str:
-    inputs = blip_processor(image, return_tensors="pt")
-    out = blip_model.generate(
-        **inputs,
-        max_length=100,
-        num_beams=5,
-        repetition_penalty=1.2,
-        length_penalty=1.0,
-        early_stopping=True
-    )
-    caption = blip_processor.decode(out[0], skip_special_tokens=True)
-    return caption
+    if blip_processor is None or blip_model is None:
+        return "BLIP модель не загружена."
+    try:
+        inputs = blip_processor(image, return_tensors="pt")
+        out = blip_model.generate(
+            **inputs,
+            max_length=100,
+            num_beams=5,
+            repetition_penalty=1.2,
+            length_penalty=1.0,
+            early_stopping=True
+        )
+        caption = blip_processor.decode(out[0], skip_special_tokens=True)
+        return caption
+    except Exception as e:
+        return f"Ошибка генерации описания: {e}"
