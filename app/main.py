@@ -124,10 +124,12 @@ async def predict(file: UploadFile = File(...), request: Request = None):
         cam_filename = f"{uuid.uuid4().hex}.jpg"
         cam_path = os.path.join(BASE_DIR, "..", "static", cam_filename)
 
+        print("▶️  Начинаем анализ изображения...")
         results = predict_image_top3(image, save_cam_path=cam_path)
+        print("✅ Результат получен:", results)
 
         if "error" in results:
-            logger.error(f"❌ Ошибка в predict_image_top3: {results['error']}")
+            logger.error(f"❌ Ошибка в анализе: {results['error']}")
             return JSONResponse(status_code=500, content=results)
 
         return JSONResponse(content={
@@ -139,6 +141,7 @@ async def predict(file: UploadFile = File(...), request: Request = None):
     except Exception as e:
         import traceback
         traceback_str = traceback.format_exc()
-        logger.error(f"❌ Непредвиденная ошибка: {str(e)}\n{traceback_str}")
+        logger.error(f"❌ Exception: {str(e)}\n{traceback_str}")
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
