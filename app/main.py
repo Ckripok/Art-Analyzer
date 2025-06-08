@@ -6,7 +6,6 @@ from fastapi.staticfiles import StaticFiles
 from app.predict_all_combined import predict_image_top3
 from PIL import Image
 import io
-from fastapi import Request
 from fastapi.logger import logger
 
 app = FastAPI()
@@ -23,8 +22,8 @@ if os.path.exists(static_genre_path):
     app.mount("/static_examples_genre", StaticFiles(directory=static_genre_path), name="static_examples_genre")
 
 @app.get("/")
-async def home():
-    return FileResponse(os.path.join(BASE_DIR, "..", "templates", "main.html"))
+async def root():
+    return {"message": "OK"}
 
 
 @app.get("/main.html")
