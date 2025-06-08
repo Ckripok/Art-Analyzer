@@ -10,4 +10,5 @@ scikit-learn
 matplotlib
 transformers
 tqdm
-opencv-python
+opencv-python-headless
+
