@@ -11,3 +11,4 @@ transformers
 tqdm
 opencv-python-headless
 safetensors
+python-multipart
