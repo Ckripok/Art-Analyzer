@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from app.predict_all_combined import predict_image_top3
 from PIL import Image
 import io
+from fastapi import Request
 from fastapi.logger import logger
 
 app = FastAPI()
@@ -112,22 +113,32 @@ async def contacts():
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "contacts.html"))
 
 
+from fastapi import Request  # добавь импорт
+
 @app.post("/predict_all_combined")
-async def predict(file: UploadFile = File(...)):
-    image_bytes = await file.read()
-    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+async def predict(file: UploadFile = File(...), request: Request = None):
+    try:
+        image_bytes = await file.read()
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-    # Сохраняем CAM-карту в static/
-    cam_filename = f"{uuid.uuid4().hex}.jpg"
-    cam_path = os.path.join(BASE_DIR, "..", "static", cam_filename)
+        cam_filename = f"{uuid.uuid4().hex}.jpg"
+        cam_path = os.path.join(BASE_DIR, "..", "static", cam_filename)
 
-    results = predict_image_top3(image, save_cam_path=cam_path)
+        results = predict_image_top3(image, save_cam_path=cam_path)
 
-    if "error" in results:
-        return JSONResponse(status_code=500, content=results)
+        if "error" in results:
+            logger.error(f"❌ Ошибка в predict_image_top3: {results['error']}")
+            return JSONResponse(status_code=500, content=results)
 
-    return JSONResponse(content={
-        "filename": file.filename,
-        **results,
-        "cam_path": cam_filename
-    })
+        return JSONResponse(content={
+            "filename": file.filename,
+            **results,
+            "cam_path": cam_filename
+        })
+
+    except Exception as e:
+        import traceback
+        traceback_str = traceback.format_exc()
+        logger.error(f"❌ Непредвиденная ошибка: {str(e)}\n{traceback_str}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+

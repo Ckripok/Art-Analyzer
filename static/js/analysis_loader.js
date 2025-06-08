@@ -52,15 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
   paletteDiv.innerHTML = "";
   loader.style.display = "block";
   fetch("/predict_all_combined", {
-   method: "POST",
-   body: formData
-  })
-   .then(res => res.json())
-
-    .then(res => {
-  if (!res.ok) throw new Error("Server returned an error");
+  method: "POST",
+  body: formData
+})
+   .then(async res => {
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Сервер вернул ${res.status}: ${text}`);
+  }
   return res.json();
 })
+
    .then(data => {
    genreResults.innerHTML = "";
    styleResults.innerHTML = "";
@@ -319,11 +321,13 @@ document.addEventListener("DOMContentLoaded", () => {
    }
   })
    .catch(err => {
-   genreResults.innerHTML = "Ошибка анализа.";
-   styleResults.innerHTML = "";
-   console.error("Ошибка:", err);
-  })
-   .finally(() => loader.style.display = "none");
+  genreResults.innerHTML = "Ошибка анализа.";
+  styleResults.innerHTML = "";
+  console.error("Ошибка:", err);
+})
+   .finally(() => {
+  loader.style.display = "none";
+});
  }
  window.addEventListener("load", () => {
   setTimeout(() => {
