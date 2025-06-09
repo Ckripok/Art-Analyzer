@@ -99,8 +99,20 @@ def load_model(path, num_classes):
     return model
 
 
-model_genre = load_model(GENRE_PATH, len(genre_classes))
-model_style = load_model(STYLE_PATH, len(style_classes))
+model_genre = None
+model_style = None
+
+def ensure_models_loaded():
+    global model_genre, model_style
+    if model_genre is None:
+        print("📦 Загружаем модель жанров...")
+        if len(genre_classes) > 0:
+            model_genre = load_model(GENRE_PATH, len(genre_classes))
+    if model_style is None:
+        print("🎨 Загружаем модель стилей...")
+        if len(style_classes) > 0:
+            model_style = load_model(STYLE_PATH, len(style_classes))
+
 
 # Палитра
 def extract_palette(image: Image.Image, n_colors=28):
@@ -189,6 +201,7 @@ def plot_cumulative_and_pdf(data, output_cdf_path, output_pdf_path, color):
 # Главная функция предсказания
 def predict_image_top3(image: Image.Image, save_cam_path=None):
     print("✅ predict_image_top3 стартует...")
+    ensure_models_loaded()
     saturation, brightness, contrast = calc_saturation_contrast(image)
     input_tensor = transform(image).unsqueeze(0).to(DEVICE)
     saturation, brightness, contrast = calc_saturation_contrast(image)
