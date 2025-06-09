@@ -134,7 +134,7 @@ def extract_palette(image: Image.Image, n_colors=28):
     return ['#%02x%02x%02x' % tuple(c) for c in sorted_centers]
 
 # CAM
-def generate_cam(image: Image.Image, output_path: str, model, class_idx):
+#def generate_cam(image: Image.Image, output_path: str, model, class_idx):
     print("✅ generate_cam стартует...")
     cam_transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -291,11 +291,11 @@ def predict_image_top3(image: Image.Image, save_cam_path=None):
     # Сохраняем графики
     sat_path = "static/saturation_hist.png"
     bright_path = "static/brightness_hist.png"
-    plot_histogram(saturation, "Saturation Histogram", "#00ccef", sat_path)
-    plot_histogram(brightness, "Brightness Histogram", "#00f395", bright_path)
+    #plot_histogram(saturation, "Saturation Histogram", "#00ccef", sat_path)
+    #plot_histogram(brightness, "Brightness Histogram", "#00f395", bright_path)
     cdf_path = "static/brightness_cdf.png"
     pdf_path = "static/brightness_pdf.png"
-    plot_cumulative_and_pdf(brightness, cdf_path, pdf_path, "#00ff88")
+    #plot_cumulative_and_pdf(brightness, cdf_path, pdf_path, "#00ff88")
 
     bright_flat = brightness.flatten()
     brightness_stats = {
@@ -342,7 +342,7 @@ def predict_image_top3(image: Image.Image, save_cam_path=None):
     # Энтропия GLCM
     glcm_entropy = -np.sum(glcm * np.log2(glcm + 1e-12))
 
-    orb = cv2.ORB_create(nfeatures=200)
+    #orb = cv2.ORB_create(nfeatures=200)
     keypoints, descriptors = orb.detectAndCompute((gray * 255).astype(np.uint8), None)
 
     orb_img = cv2.drawKeypoints((gray * 255).astype(np.uint8), keypoints, None, color=(0, 255, 0))
