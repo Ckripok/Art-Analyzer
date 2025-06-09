@@ -10,6 +10,7 @@ import logging
 from fastapi.logger import logger
 
 app = FastAPI()
+print("✅ FastAPI стартует...")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
