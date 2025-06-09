@@ -153,10 +153,18 @@ async def predict(file: UploadFile = File(...), request: Request = None):
             "cam_path": cam_filename
         })
 
+
     except Exception as e:
+
         import traceback
+
         traceback_str = traceback.format_exc()
+
         logger.error(f"❌ Exception: {str(e)}\n{traceback_str}")
+
+        print(f"❌ Exception: {str(e)}\n{traceback_str}")  # <--- ДОБАВЬ ЭТО
+
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 

@@ -220,7 +220,9 @@ def predict_image_top3(image: Image.Image, save_cam_path=None):
 
     genre_top3 = sorted(zip(genre_classes, genre_probs), key=lambda x: x[1], reverse=True)
     style_top3 = sorted(zip(style_classes, style_probs), key=lambda x: x[1], reverse=True)
-    caption = generate_caption(image)
+
+    #caption = generate_caption(image)
+    caption = "Описание временно отключено"
     palette = extract_palette(image)
 
     avg_saturation = float(np.mean(saturation))
