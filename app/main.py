@@ -111,16 +111,19 @@ async def get_styles():
 
 @app.get("/analysis.html")
 async def analysis_page():
+    print("✅ analysis_page стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "analysis.html"))
 
 
 @app.get("/about.html")
 async def about():
+    print("✅ about стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "about.html"))
 
 
 @app.get("/contacts.html")
 async def contacts():
+    print("✅ contacts стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "contacts.html"))
 
 
@@ -128,6 +131,7 @@ from fastapi import Request  # добавь импорт
 
 @app.post("/predict_all_combined")
 async def predict(file: UploadFile = File(...), request: Request = None):
+    print("✅ predict стартует...")
     try:
         image_bytes = await file.read()
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
