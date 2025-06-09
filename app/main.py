@@ -17,6 +17,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 logging.basicConfig(level=logging.INFO)
 
+
 static_styles_path = os.path.join(BASE_DIR, "dataset_styles", "train")
 if os.path.exists(static_styles_path):
     app.mount("/static_examples", StaticFiles(directory=static_styles_path), name="static_examples")
@@ -27,26 +28,31 @@ if os.path.exists(static_genre_path):
 
 @app.get("/")
 async def home():
+    print("✅ main_home стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "main.html"))
 
 
 @app.get("/main.html")
 async def main_page():
+    print("✅ main_main_page стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "main.html"))
 
 
 @app.get("/genres.html")
 async def genres_page():
+    print("✅ main_genres_page стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "genres.html"))
 
 
 @app.get("/styles.html")
 async def styles_page():
+    print("✅ main_styles_page стартует...")
     return FileResponse(os.path.join(BASE_DIR, "..", "templates", "styles.html"))
 
 
 @app.get("/api/genres")
 async def get_genres():
+    print("✅ main_get_genres стартует...")
     base_path = os.path.join(BASE_DIR, "..", "dataset_genre", "train")
 
     genres = []
@@ -69,6 +75,7 @@ async def get_genres():
 
 @app.get("/debug/fs")
 def debug_fs():
+    print("✅ main_debug_fs стартует...")
     import os
     base = os.path.dirname(os.path.abspath(__file__))
     return {
@@ -81,6 +88,7 @@ def debug_fs():
 
 @app.get("/api/styles")
 async def get_styles():
+    print("✅ main_get_styles стартует...")
     base_path = os.path.join(BASE_DIR, "..", "dataset_styles", "train")
     styles = []
     for folder in sorted(os.listdir(base_path)):

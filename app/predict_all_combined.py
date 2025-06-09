@@ -24,6 +24,7 @@ from huggingface_hub import hf_hub_download
 
 os.makedirs("./cache", exist_ok=True)
 def get_style_examples(style_name, num=3):
+    print("✅ get_style_examples стартует...")
     base_path = os.path.join(BASE_DIR, "..", "dataset_styles", "train", style_name)
     if not os.path.exists(base_path):
         return []
@@ -32,6 +33,7 @@ def get_style_examples(style_name, num=3):
     return [f"/static_examples/{style_name}/{s}" for s in selected]
 
 def get_genre_examples(genre_name, num=3):
+    print("✅ get_genre_examples стартует...")
     base_path = os.path.join(BASE_DIR, "..", "dataset_genre", "train", genre_name)
     if not os.path.exists(base_path):
         return []
@@ -66,6 +68,7 @@ blip_processor = None
 blip_model = None
 
 def load_blip_models():
+    print("✅ load_blip_models стартует...")
     global blip_processor, blip_model
     if blip_processor is None or blip_model is None:
         print("📦 Загружаем BLIP модель...")
@@ -84,6 +87,7 @@ transform = transforms.Compose([
 ])
 
 def load_model(path, num_classes):
+    print("✅ load_model стартует...")
     if num_classes == 0:
         return None  # модель не создаётся без классов
 
@@ -100,6 +104,7 @@ model_style = load_model(STYLE_PATH, len(style_classes))
 
 # Палитра
 def extract_palette(image: Image.Image, n_colors=28):
+    print("✅ extract_palette стартует...")
     image = image.resize((100, 100))
     pixels = np.array(image).reshape(-1, 3)
 
@@ -109,6 +114,7 @@ def extract_palette(image: Image.Image, n_colors=28):
 
     # Преобразование RGB в HSV и сортировка по Hue
     def rgb_to_hsv(rgb):
+        print("✅ rgb_to_hsv стартует...")
         return colorsys.rgb_to_hsv(rgb[0]/255.0, rgb[1]/255.0, rgb[2]/255.0)
 
     sorted_centers = sorted(centers, key=lambda c: rgb_to_hsv(c)[0])  # сортировка по оттенку (Hue)
@@ -117,6 +123,7 @@ def extract_palette(image: Image.Image, n_colors=28):
 
 # CAM
 def generate_cam(image: Image.Image, output_path: str, model, class_idx):
+    print("✅ generate_cam стартует...")
     cam_transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -125,6 +132,7 @@ def generate_cam(image: Image.Image, output_path: str, model, class_idx):
     features = []
 
     def hook_fn(module, input, output):
+        print("✅ hook_fn стартует...")
         features.append(output.detach())
 
     hook = model.layer4[-1].register_forward_hook(hook_fn)
@@ -147,6 +155,7 @@ def generate_cam(image: Image.Image, output_path: str, model, class_idx):
     cv2.imwrite(output_path, result)
 
 def plot_cumulative_and_pdf(data, output_cdf_path, output_pdf_path, color):
+    print("✅ plot_cumulative_and_pdf стартует...")
     # Кумулятивная гистограмма
     plt.figure(figsize=(6, 3), dpi=100)
     hist, bins = np.histogram(data, bins=256, density=True)
@@ -179,6 +188,7 @@ def plot_cumulative_and_pdf(data, output_cdf_path, output_pdf_path, color):
 
 # Главная функция предсказания
 def predict_image_top3(image: Image.Image, save_cam_path=None):
+    print("✅ predict_image_top3 стартует...")
     saturation, brightness, contrast = calc_saturation_contrast(image)
     input_tensor = transform(image).unsqueeze(0).to(DEVICE)
     saturation, brightness, contrast = calc_saturation_contrast(image)
@@ -363,6 +373,7 @@ def predict_image_top3(image: Image.Image, save_cam_path=None):
 
 # Пример массового анализа
 def predict_all(folder="manual_tests"):
+    print("✅ predict_all стартует...")
     for file in sorted(os.listdir(folder)):
         if file.lower().endswith((".jpg", ".jpeg", ".png")):
             path = os.path.join(folder, file)
@@ -373,6 +384,7 @@ def predict_all(folder="manual_tests"):
 
 
 def calc_saturation_contrast(image: Image.Image):
+    print("✅ calc_saturation_contrast стартует...")
     img_np = np.array(image.convert("RGB")) / 255.0
     hsv = matplotlib.colors.rgb_to_hsv(img_np)
 
@@ -383,6 +395,7 @@ def calc_saturation_contrast(image: Image.Image):
     return saturation.flatten(), value.flatten(), contrast
 
 def plot_histogram(data, title, color, output_path):
+    print("✅ plot_histogram стартует...")
     plt.figure(figsize=(6, 3), dpi=100)
     plt.hist(data, bins=30, color=color, edgecolor='none', alpha=0.8)
     plt.title(title, fontdict={'family': 'Tablon', 'color': '#00ff88', 'fontsize': 12})
@@ -394,6 +407,7 @@ def plot_histogram(data, title, color, output_path):
     plt.savefig(output_path, transparent=True)
     plt.close()
 def generate_caption(image: Image.Image) -> str:
+    print("✅ generate_caption стартует...")
     load_blip_models()
     inputs = blip_processor(image, return_tensors="pt")
     out = blip_model.generate(
